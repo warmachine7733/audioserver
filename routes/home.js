@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
     cb(null, `${file.originalname}`);
   }
 });
-console.log("storage", storage);
+// console.log("storage", storage);
 
 const uploadAudio = multer({ storage });
 
@@ -23,5 +23,6 @@ const {
 router.route("/").get(userController.index);
 router.route("/upload").post(uploadAudio.single("file"), userController.upload);
 router.route("/getAudio").get(userController.getAudio);
+router.route("/getSelectedAudio").post(userController.getSelectedAudio);
 
 module.exports = router;

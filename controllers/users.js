@@ -1,4 +1,6 @@
 const Audio = require("../models/audio");
+const { getAudioDurationInSeconds } = require("get-audio-duration");
+const NodeID3 = require("node-id3");
 
 const Joi = require("joi");
 
@@ -11,16 +13,19 @@ module.exports = {
   },
   upload: async (req, res, next) => {
     console.log("db saving");
+
     try {
       let pic = [];
-      console.log("files", req.files[0].filename);
       // req.files.map(each => pic.push({ url: each.path })); //each.path for local ,each.location for aws s3
       // console.log(pic);
-
+      let path = req.file.path;
+      //saving duration in db
+      let duration = await getAudioDurationInSeconds(path);
       let tempAudio = {
-        url: req.files[0].filename,
+        url: req.file.filename,
         title: req.body.title,
         cover: "default.jpg",
+        duration: duration,
         artist: req.body.artist
       };
       let newBike = new Audio(tempAudio);
@@ -38,6 +43,16 @@ module.exports = {
       res.status(200).json(result);
     } catch (error) {
       console.log(error);
+    }
+  },
+  getSelectedAudio: async (req, res, next) => {
+    try {
+      const id = req.body.id;
+      const result = await Audio.find({ id });
+      console.log("result", result);
+      res.status(200).json(result);
+    } catch (e) {
+      console.log(e);
     }
   }
 };

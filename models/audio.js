@@ -4,7 +4,8 @@ const audioSchema = new Schema({
   url: String,
   cover: String,
   title: String,
-  artist: Array
+  artist: Array,
+  duration: Number
 });
 
 const Audio = mongoose.model("audio", audioSchema);
