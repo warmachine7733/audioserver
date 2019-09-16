@@ -1,4 +1,5 @@
 const Audio = require("../models/audio");
+const CurrentMusicStatus = require("../models/currentMusicStatus");
 const { getAudioDurationInSeconds } = require("get-audio-duration");
 const NodeID3 = require("node-id3");
 const mongoose = require("mongoose");
@@ -56,6 +57,18 @@ module.exports = {
         _id: mongoose.Types.ObjectId(id)
       });
       console.log("result", result, id);
+      //saving the current music
+      let tempCurrentMusicStatus = {
+        musicId: id,
+        currentPosition: 200,
+        playing: true,
+        lastPlayed: new Date().toISOString()
+      };
+      //delete the last and add the current
+      let tempListOfPlayers = await CurrentMusicStatus.remove({});
+
+      let currentMusicStatus = new CurrentMusicStatus(tempCurrentMusicStatus);
+      await currentMusicStatus.save();
       res.status(200).json(result);
     } catch (e) {
       console.log(e);
